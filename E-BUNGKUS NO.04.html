@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sertifikat - E-Bungkus Online</title>
+  <style>
+    /* CSS Reset & Styling Dasar */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f1f5f9; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+    
+    /* Navigasi */
+    nav { background-color: #0f172a; color: #ffffff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); flex-wrap: wrap; gap: 8px; }
+    .nav-brand { font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 6px; }
+    .nav-brand span { background-color: #f59e0b; color: #0f172a; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    .nav-menu { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+    .nav-btn { background: transparent; border: none; color: #94a3b8; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; }
+    .nav-btn:hover { background-color: #1e293b; color: #ffffff; }
+    .nav-btn.active { background-color: #1e293b; color: #f59e0b; }
+    .btn-logout { background-color: #e11d48; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; margin-left: 8px; }
+
+    /* Konten Utama */
+    main { max-width: 1200px; width: 100%; margin: 16px auto; padding: 0 12px; flex-grow: 1; }
+    .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; }
+    .card-title { font-size: 15px; font-weight: bold; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    
+    /* Dashboard Cards */
+    .dash-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+    @media (min-width: 768px) {
+      .dash-stat-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    }
+    .stat-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .stat-card .num { font-size: 24px; font-weight: bold; color: #0f172a; }
+    .stat-card .label { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; }
+
+    /* Form & Input */
+    .grid-2 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; gap: 16px; }
+      .grid-3 { grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+      main { padding: 0 16px; }
+      .card { padding: 24px; }
+    }
+
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 4px; text-transform: uppercase; }
+    input, select, textarea { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; transition: border-color 0.2s; background: #fff; }
+    input:focus, select:focus, textarea:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15); }
+    
+    /* Tombol */
+    .btn { background-color: #0f172a; color: #ffffff; border: none; padding: 9px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn:hover { background-color: #1e293b; }
+    .btn-amber { background-color: #f59e0b; color: #0f172a; }
+    .btn-amber:hover { background-color: #d97706; }
+    .btn-rose { background-color: #e11d48; color: #fff; }
+    .btn-rose:hover { background-color: #be123c; }
+    .btn-sm { padding: 5px 8px; font-size: 11px; }
+
+    /* Tabel */
+    .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; min-width: 500px; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; }
+    th { background-color: #f8fafc; color: #334155; font-weight: 700; text-transform: uppercase; font-size: 10px; }
+    tr:hover { background-color: #f8fafc; }
+
+    /* Utilitas */
+    .hidden { display: none !important; }
+    .badge { background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+
+    /* Loading Indicator */
+    #loading-indicator {
+      position: fixed; top: 10px; right: 10px; background: #0f172a; color: #f59e0b; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; z-index: 10000; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: none; align-items: center; gap: 6px;
+    }
+
+    /* Modal */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+    .modal-box { background: #fff; width: 100%; max-width: 450px; padding: 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+
+    /* Grid Logo Responsif */
+    .logo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    @media (min-width: 768px) { .logo-grid { grid-template-columns: repeat(6, 1fr); gap: 8px; } }
+
+    /* Styling Tanda Tangan Transparan */
+    .signature-container { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 145px; margin-top: 8px; margin-bottom: 8px; }
+    .signature-container img { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-height: 120px; max-width: 350px; object-fit: contain; opacity: 0.35; z-index: 1; pointer-events: none; display: none; }
+    .signature-text { position: relative; z-index: 2; }
+
+    /* SCREEN LOGIN */
+    #login-overlay { position: fixed; inset: 0; background-color: #0b1320; display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 16px; }
+    .login-card { background-color: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 32px 24px; width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
+    .login-header-group { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .login-icon-box { width: 64px; height: 64px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 1px 1px rgba(255,255,255,0.1); }
+    .login-badge-terkunci { background-color: #3b2d1d; border: 1px solid #78350f; color: #fbbf24; font-size: 13px; font-weight: 600; padding: 6px 16px; border-radius: 20px; }
+    .login-input-group { width: 100%; margin-bottom: 16px; }
+    .login-input { width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 12px 16px; border-radius: 12px; font-size: 14px; text-align: center; letter-spacing: 2px; }
+    .login-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
+    .login-btn-action { width: 100%; background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%); color: #ffffff; border: none; padding: 14px; border-radius: 14px; font-size: 16px; font-weight: 700; letter-spacing: 1.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4); transition: transform 0.1s, background 0.2s; }
+    .login-btn-action:hover { background: linear-gradient(180deg, #60a5fa 0%, #1d4ed8 100%); }
+    .login-msg-error { color: #f87171; font-size: 12px; margin-top: 10px; text-align: center; min-height: 18px; }
+
+    /* Area Cetak Sertifikat A4 Landscape */
+    #print-area { display: none; }
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area { position: absolute; left: 0; top: 0; width: 297mm; height: 210mm; display: block !important; }
+      @page { size: A4 landscape; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- INDIKATOR SINKRONISASI -->
+  <div id="loading-indicator">
+    <span>⏳</span> <span id="loading-text">Menyinkronkan ke Sheets...</span>
+  </div>
+
+  <!-- MODAL / OVERLAY LOGIN -->
+  <div id="login-overlay">
+    <div class="login-card">
+      <div class="login-header-group">
+        <div class="login-icon-box">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="login-badge-terkunci">Terkunci</div>
+      </div>
+      <div class="login-input-group">
+        <input type="password" id="access-code-input" class="login-input" placeholder="Masukkan Kode Akses..." onkeydown="if(event.key==='Enter') checkAccessCode()">
+      </div>
+      <button type="button" id="btn-login-submit" onclick="checkAccessCode()" class="login-btn-action">🔑 KODE</button>
+      <div id="login-error-msg" class="login-msg-error"></div>
+    </div>
+  </div>
+
+  <!-- Navigasi Utama -->
+  <nav class="no-print">
+    <div class="nav-brand">🏆 E-BUNGKUS <span>NO.04</span></div>
+    <div class="nav-menu">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-btn active">📊 DASHBOARD</button>
+      <button onclick="switchTab('pengaturan')" id="tab-pengaturan" class="nav-btn">⚙️ PENGATURAN</button>
+      <button onclick="switchTab('peserta')" id="tab-peserta" class="nav-btn">👥 PESERTA</button>
+      <button onclick="switchTab('sertifikat')" id="tab-sertifikat" class="nav-btn">📜 SERTIFIKAT</button>
+      <button onclick="logoutSystem()" class="btn-logout">🔒 Kunci</button>
+    </div>
+  </nav>
+
+  <!-- Konten Utama -->
+  <main class="no-print">
+    
+    <!-- MODUL 0: DASHBOARD -->
+    <section id="modul-dashboard">
+      
+      <!-- KONTROL & LINK GOOGLE SHEETS DI DASHBOARD -->
+      <div class="card" style="background: #e0f2fe; border: 1px solid #bae6fd; margin-bottom: 16px;">
+        <div class="card-title" style="border-bottom-color: #bae6fd; margin-bottom: 10px; padding-bottom: 6px;">
+          <span style="color: #0369a1; font-size: 13px;">🌐 KONEKSI GOOGLE SHEETS & SINKRONISASI</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <div style="flex-grow: 1;">
+            <input type="text" id="dash-sheets-url" placeholder="https://script.google.com/macros/s/.../exec" style="background: #fff; font-size: 12px;">
+          </div>
+          <button onclick="saveSheetsUrlFromDashboard()" class="btn btn-sm btn-amber" style="padding: 8px 12px;">💾 Simpan URL</button>
+          <button onclick="loadDataFromCloud()" class="btn btn-sm" style="background-color: #0d9488; color: #fff; padding: 8px 12px;">🔄 Sinkron / Muat Data</button>
+        </div>
+        <small style="color: #0369a1; font-size: 10px; display: block; margin-top: 6px;">* Masukkan URL Web App Google Apps Script di atas agar aplikasi terhubung penuh ke Cloud.</small>
+      </div>
+
+      <div class="dash-stat-grid">
+        <div class="stat-card">
+          <div class="num" id="dash-total-peserta">0</div>
+          <div class="label">Total Peserta</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="dash-total-terbit" style="color: #16a34a;">0</div>
+          <div class="label">Sertifikat Terbit</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="dash-belum-terbit" style="color: #d97706;">0</div>
+          <div class="label">Belum Diterbitkan</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="dash-total-arsip" style="color: #2563eb;">0</div>
+          <div class="label">Total Arsip</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>🕒 Riwayat Sertifikat</span>
+          <button onclick="switchTab('sertifikat')" class="btn btn-sm btn-amber">Semua Arsip</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>No. Sertifikat</th>
+                <th>Nama Penerima</th>
+                <th>Tanggal Terbit</th>
+                <th style="text-align: center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="table-dash-recent-body">
+              <tr><td colspan="4" style="text-align: center; color: #94a3b8; font-style: italic;">Memuat data dari Google Sheets...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODUL 1: PENGATURAN -->
+    <section id="modul-pengaturan" class="hidden">
+      <div class="card">
+        <div class="card-title"><span>⚙️ PENGATURAN APLIKASI</span></div>
+        <form onsubmit="saveSettings(event)">
+          
+          <div class="card" style="background: #e0f2fe; border: 1px solid #bae6fd; margin-bottom: 14px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="color: #0369a1; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">🔑 KODE AKSES APLIKASI (Sistem Lokal HTML)</label>
+              <input type="password" id="cfg-app-pass" placeholder="Password Login Default: 1">
+            </div>
+          </div>
+
+          <div class="card" style="background: #f8fafc; margin-bottom: 14px;">
+            <label style="color: #0f172a; margin-bottom: 8px; font-size: 12px;">A. Pengaturan Logo</label>
+            <div class="logo-grid">
+              <div>
+                <label style="font-size: 9px;">Logo-1 (Kiri 1)</label>
+                <input type="file" id="logo-kiri1-file" accept="image/*" onchange="previewLogo(event, 'kiri1')" style="padding: 2px; font-size: 8px;">
+                <div style="margin-top: 4px;"><img id="prev-kiri1" src="" style="max-height: 24px; max-width: 40px; object-fit: contain; border: 1px dashed #cbd5e1; background: #fff; display: block;"></div>
+              </div>
+              <div>
+                <label style="font-size: 9px;">Logo-2 (Kiri 2)</label>
+                <input type="file" id="logo-kiri2-file" accept="image/*" onchange="previewLogo(event, 'kiri2')" style="padding: 2px; font-size: 8px;">
+                <div style="margin-top: 4px;"><img id="prev-kiri2" src="" style="max-height: 24px; max-width: 40px; object-fit: contain; border: 1px dashed #cbd5e1; background: #fff; display: block;"></div>
+              </div>
+              <div>
+                <label style="font-size: 9px;">Logo-3 (Kanan 1)</label>
+                <input type="file" id="logo-kanan1-file" accept="image/*" onchange="previewLogo(event, 'kanan1')" style="padding: 2px; font-size: 8px;">
+                <div style="margin-top: 4px;"><img id="prev-kanan1" src="" style="max-height: 24px; max-width: 40px; object-fit: contain; border: 1px dashed #cbd5e1; background: #fff; display: block;"></div>
+              </div>
+              <div>
+                <label style="font-size: 9px;">Logo-4 (Kanan 2)</label>
+                <input type="file" id="logo-kanan2-file" accept="image/*" onchange="previewLogo(event, 'kanan2')" style="padding: 2px; font-size: 8px;">
+                <div style="margin-top: 4px;"><img id="prev-kanan2" src="" style="max-height: 24px; max-width: 40px; object-fit: contain; border: 1px dashed #cbd5e1; background: #fff; display: block;"></div>
+              </div>
+              <div>
+                <label style="font-size: 9px;">Logo-5 (Kanan 3)</label>
+                <input type="file" id="logo-kanan3-file" accept="image/*" onchange="previewLogo(event, 'kanan3')" style="padding: 2px; font-size: 8px;">
+                <div style="margin-top: 4px;"><img id="prev-kanan3" src="" style="max-height: 24px; max-width: 40px; object-fit: contain; border: 1px dashed #cbd5e1; background: #fff; display: block;"></div>
+              </div>
+              <div>
+                <label style="font-size: 9px;">Logo-6 (Kanan 4)</label>
+                <input type="file" id="logo-kanan4-file" accept="image/*" onchange="previewLogo(event, 'kanan4')" style="padding: 2px; font-size: 8px;">
+                <div style="margin-top: 4px;"><img id="prev-kanan4" src="" style="max-height: 24px; max-width: 40px; object-fit: contain; border: 1px dashed #cbd5e1; background: #fff; display: block;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="background: #f8fafc; margin-bottom: 14px;">
+            <label style="color: #0f172a; margin-bottom: 8px; font-size: 12px;">B. Identitas</label>
+            <div class="grid-2">
+              <div class="form-group"><label>Nama Instansi / Dinas</label><input type="text" id="cfg-instansi" required></div>
+              <div class="form-group"><label>Wilayah / Kabupaten</label><input type="text" id="cfg-daerah" required></div>
+            </div>
+            <div class="form-group"><label>Alamat Instansi / Kantor</label><input type="text" id="cfg-alamat" placeholder="Jl. Contoh No. 1..." required></div>
+            <div class="grid-2">
+              <div class="form-group" style="margin-bottom: 0;"><label>Judul Resmi Kegiatan / Pelatihan</label><input type="text" id="cfg-acara" required></div>
+              <div class="form-group" style="margin-bottom: 0;"><label>Diselenggarakan Oleh</label><input type="text" id="cfg-penyelenggara" placeholder="Contoh: Bidang Terkait..." required></div>
+            </div>
+          </div>
+
+          <div class="card" style="background: #f8fafc; margin-bottom: 14px;">
+            <label style="color: #0f172a; margin-bottom: 8px; font-size: 12px;">C. Pejabat Penandatangan</label>
+            <div class="grid-3" style="margin-bottom: 12px;">
+              <div class="form-group" style="margin-bottom: 0;"><label>Jabatan</label><input type="text" id="cfg-jabatan" required></div>
+              <div class="form-group" style="margin-bottom: 0;"><label>Nama Lengkap & Gelar</label><input type="text" id="cfg-pejabat" required></div>
+              <div class="form-group" style="margin-bottom: 0;"><label>NIP Pejabat</label><input type="text" id="cfg-nip" required></div>
+            </div>
+
+            <div class="form-group" style="margin-top: 12px; margin-bottom: 12px;">
+              <label>Upload Spesimen</label>
+              <input type="file" id="cfg-ttd-file" accept="image/*" onchange="previewTtd(event)" style="padding: 4px;">
+              <div style="margin-top: 6px;">
+                <img id="prev-ttd" src="" style="max-height: 50px; max-width: 150px; object-fit: contain; border: 1px dashed #cbd5e1; background: #fff; display: none;">
+              </div>
+            </div>
+
+            <div style="background: #e2e8f0; padding: 10px; border-radius: 6px; margin-top: 10px; margin-bottom: 12px;">
+              <label style="color: #0f172a; margin-bottom: 6px; font-size: 11px;">🎛️ Presisi Ukuran</label>
+              <div class="grid-2" style="gap: 8px;">
+                <div class="form-group" style="margin-bottom: 4px;"><label style="font-size: 10px;">Lebar Maksimum TTD (px): <span id="val-ttd-w">350</span>px</label><input type="range" id="cfg-ttd-width" min="100" max="600" value="350" oninput="updateTtdPreviewParams()"></div>
+                <div class="form-group" style="margin-bottom: 4px;"><label style="font-size: 10px;">Tinggi Maksimum TTD (px): <span id="val-ttd-h">120</span>px</label><input type="range" id="cfg-ttd-height" min="50" max="300" value="120" oninput="updateTtdPreviewParams()"></div>
+                <div class="form-group" style="margin-bottom: 4px;"><label style="font-size: 10px;">Geser Posisi Horizontal (X): <span id="val-ttd-x">0</span>px</label><input type="range" id="cfg-ttd-offset-x" min="-150" max="150" value="0" oninput="updateTtdPreviewParams()"></div>
+                <div class="form-group" style="margin-bottom: 4px;"><label style="font-size: 10px;">Geser Posisi Vertikal (Y): <span id="val-ttd-y">0</span>px</label><input type="range" id="cfg-ttd-offset-y" min="-100" max="100" value="0" oninput="updateTtdPreviewParams()"></div>
+                <div class="form-group" style="margin-bottom: 0;"><label style="font-size: 10px;">Tingkat Transparansi: <span id="val-ttd-op">0.35</span></label><input type="range" id="cfg-ttd-opacity" min="0.1" max="1.0" step="0.05" value="0.35" oninput="updateTtdPreviewParams()"></div>
+              </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 12px;">
+              <div class="form-group"><label>Kota / Tempat</label><input type="text" id="cfg-tempat" required></div>
+              <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <label style="margin-bottom: 0;">Tanggal Terbit</label>
+                  <button type="button" onclick="setTanggalHariIni()" class="btn btn-sm btn-amber" style="padding: 2px 6px; font-size: 9px;">📅 Hari Ini</button>
+                </div>
+                <input type="date" id="cfg-tanggal" required>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top: 4px; margin-bottom: 0;"><label>Tanggal Kegiatan</label><input type="text" id="cfg-tgl-kegiatan" required></div>
+          </div>
+
+          <div class="card" style="background: #f8fafc; margin-bottom: 14px;">
+            <label style="color: #0f172a; margin-bottom: 8px; font-size: 12px;">D. Penomoran, Durasi & Mata Pelajaran</label>
+            <div class="grid-2" style="grid-template-columns: 2fr 1fr 2fr 1fr; gap: 8px;">
+              <div class="form-group"><label>Awalan (Prefix)</label><input type="text" id="cfg-prefix-no" placeholder="400.3.4/" required></div>
+              <div class="form-group"><label>No. Urut</label><input type="number" id="cfg-counter-no" required></div>
+              <div class="form-group"><label>Akhiran (Suffix)</label><input type="text" id="cfg-suffix-no" placeholder="/DISPEN-ARFAK/2026"></div>
+              <div class="form-group"><label>Durasi (JP)</label><input type="text" id="cfg-jp" required></div>
+            </div>
+            <div class="form-group" style="margin-top: 8px; margin-bottom: 0;"><label>Mata Pelajaran / Materi</label><textarea id="cfg-matkul" rows="3" required></textarea></div>
+          </div>
+
+          <button type="submit" class="btn btn-amber">💾 Simpan Konfigurasi</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- MODUL 2: PESERTA -->
+    <section id="modul-peserta" class="hidden">
+      <div style="display: grid; grid-template-columns: 1fr; gap: 16px;">
+        <div class="card">
+          <div class="card-title"><span>➕ Tambah Peserta</span></div>
+          <form onsubmit="addPeserta(event)">
+            <div class="form-group">
+              <label>Kategori Identitas</label>
+              <select id="p-tipe-id" onchange="toggleIdInput()" required>
+                <option value="NIP">NIP</option>
+                <option value="PAUD">PAUD</option>
+                <option value="PNF">PNF</option>
+                <option value="Tidak">Tidak Ada / Kosong</option>
+              </select>
+            </div>
+            <div class="form-group" id="group-no-id">
+              <label id="label-no-id">Nomor / NIP / ID</label>
+              <input type="text" id="p-nip" placeholder="Nomor identitas...">
+            </div>
+            <div class="form-group"><label>Nama Lengkap & Gelar</label><input type="text" id="p-nama" placeholder="Nama lengkap..." required></div>
+            <div class="form-group"><label>Nomor WA</label><input type="text" id="p-wa" placeholder="081234567890" required></div>
+            <div class="form-group">
+              <label>Peran</label>
+              <select id="p-peran" required>
+                <option value="PESERTA">Peserta</option>
+                <option value="PESERTA AKTIF">Peserta Aktif</option>
+                <option value="PEMATERI">Pemateri / Narasumber</option>
+                <option value="PANITIA">Panitia</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-amber">💾 Simpan & Sinkron ke Sheets</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>👥 Peserta</span>
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+              <button type="button" onclick="loadDataFromCloud()" class="btn btn-sm" style="background-color: #0d9488; color: #fff;">🔄 Muat Ulang</button>
+              <span id="count-peserta" class="badge">Total: 0</span>
+            </div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Kategori / ID</th>
+                  <th>Nama Lengkap</th>
+                  <th>WA</th>
+                  <th>Peran</th>
+                  <th style="text-align: center;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="table-peserta-body">
+                <tr><td colspan="5" style="text-align: center; color: #94a3b8; font-style: italic;">Belum ada data peserta.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODUL 3: SERTIFIKAT & ARSIP -->
+    <section id="modul-sertifikat" class="hidden">
+      <div class="card">
+        <div class="card-title"><span>🪄 Terbitkan Sertifikat</span></div>
+        <div class="grid-2" style="align-items: flex-end;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Pilih Peserta</label>
+            <select id="select-peserta-sertifikat">
+              <option value="">-- Pilih Peserta --</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <button onclick="generateSertifikat()" class="btn btn-amber" style="width: 100%; justify-content: center; padding: 9px;">✨ Generate & Simpan</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>📦 Arsip Sertifikat</span>
+          <span id="count-arsip" class="badge">Total: 0</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>No. Sertifikat</th>
+                <th>Nama Penerima</th>
+                <th>Tanggal Terbit</th>
+                <th style="text-align: center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="table-arsip-body">
+              <tr><td colspan="4" style="text-align: center; color: #94a3b8; font-style: italic;">Belum ada arsip sertifikat.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL EDIT PESERTA -->
+  <div id="modal-edit-peserta" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div style="font-weight: bold; font-size: 15px; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">✏️ Edit Data Peserta</div>
+      <input type="hidden" id="edit-p-id">
+      <div class="form-group">
+        <label>Kategori Identitas</label>
+        <select id="edit-p-tipe-id" onchange="toggleEditIdInput()">
+          <option value="NIP">NIP</option>
+          <option value="PAUD">PAUD</option>
+          <option value="PNF">PNF</option>
+          <option value="Tidak">Tidak Ada</option>
+        </select>
+      </div>
+      <div class="form-group" id="edit-group-no-id"><label>Nomor / NIP / ID</label><input type="text" id="edit-p-nip"></div>
+      <div class="form-group"><label>Nama Lengkap & Gelar</label><input type="text" id="edit-p-nama"></div>
+      <div class="form-group"><label>WhatsApp</label><input type="text" id="edit-p-wa"></div>
+      <div class="form-group">
+        <label>Peran</label>
+        <select id="edit-p-peran">
+          <option value="PESERTA">Peserta</option>
+          <option value="PESERTA AKTIF">Peserta Aktif</option>
+          <option value="PEMATERI">Pemateri / Narasumber</option>
+          <option value="PANITIA">Panitia</option>
+        </select>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+        <button onclick="closeEditPesertaModal()" class="btn btn-sm" style="background-color: #cbd5e1; color: #334155;">Batal</button>
+        <button onclick="saveEditPeserta()" class="btn btn-amber btn-sm">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT ARSIP SERTIFIKAT -->
+  <div id="modal-edit-arsip" class="modal-backdrop hidden">
+    <div class="modal-box">
+      <div style="font-weight: bold; font-size: 15px; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">✏️ Edit Arsip Sertifikat</div>
+      <input type="hidden" id="edit-a-id">
+      <div class="form-group"><label>Nomor Sertifikat</label><input type="text" id="edit-a-nosert"></div>
+      <div class="form-group"><label>Nama Penerima & Gelar</label><input type="text" id="edit-a-nama"></div>
+      <div class="form-group">
+        <label>Kategori Identitas</label>
+        <select id="edit-a-tipe-id" onchange="toggleEditArsipIdInput()">
+          <option value="NIP">NIP</option>
+          <option value="PAUD">PAUD</option>
+          <option value="PNF">PNF</option>
+          <option value="Tidak">Tidak Ada</option>
+        </select>
+      </div>
+      <div class="form-group" id="edit-arsip-group-no-id"><label>Nomor / NIP / ID</label><input type="text" id="edit-a-nip"></div>
+      <div class="form-group"><label>WhatsApp</label><input type="text" id="edit-a-wa"></div>
+      <div class="form-group">
+        <label>Peran</label>
+        <select id="edit-a-peran">
+          <option value="PESERTA">Peserta</option>
+          <option value="PESERTA AKTIF">Peserta Aktif</option>
+          <option value="PEMATERI">Pemateri / Narasumber</option>
+          <option value="PANITIA">Panitia</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Keterangan Tanggal Terbit</label><input type="text" id="edit-a-tglterbit"></div>
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+        <button onclick="closeEditArsipModal()" class="btn btn-sm" style="background-color: #cbd5e1; color: #334155;">Batal</button>
+        <button onclick="saveEditArsip()" class="btn btn-amber btn-sm">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMPLATE CETAK SERTIFIKAT (A4 LANDSCAPE) -->
+  <div id="print-area">
+    <div style="width: 297mm; height: 210mm; padding: 10mm 10mm 12mm 10mm; background: #ffffff; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; font-family: 'Times New Roman', serif; position: relative; overflow: hidden;">
+      
+      <svg style="position: absolute; top: 0; right: 0; width: 140mm; height: 140mm; z-index: 1; pointer-events: none;" viewBox="0 0 200 200">
+        <polygon points="200,0 200,160 40,0" fill="#1e40af" opacity="0.85" />
+        <polygon points="200,0 200,125 75,0" fill="#2563eb" />
+        <polygon points="200,0 200,85 115,0" fill="#3b82f6" opacity="0.9" />
+        <line x1="30" y1="0" x2="200" y2="170" stroke="#d97706" stroke-width="2.5" />
+        <line x1="65" y1="0" x2="200" y2="135" stroke="#f59e0b" stroke-width="1.5" />
+      </svg>
+
+      <svg style="position: absolute; bottom: 0; left: 0; width: 140mm; height: 140mm; z-index: 1; pointer-events: none;" viewBox="0 0 200 200">
+        <polygon points="0,200 0,40 160,200" fill="#1e40af" opacity="0.85" />
+        <polygon points="0,200 0,75 125,200" fill="#2563eb" />
+        <polygon points="0,200 0,115 85,200" fill="#3b82f6" opacity="0.9" />
+        <line x1="0" y1="30" x2="170" y2="200" stroke="#d97706" stroke-width="2.5" />
+        <line x1="0" y1="65" x2="135" y2="200" stroke="#f59e0b" stroke-width="1.5" />
+      </svg>
+
+      <div style="width: 100%; height: 188mm; border: 4px solid #0f172a; outline: 2px solid #d97706; outline-offset: -10px; padding: 25px 60px 35px 60px; display: flex; flex-direction: column; justify-content: flex-start; gap: 20px; text-align: center; background-color: #ffffff; position: relative; z-index: 2;">
+        
+        <div>
+          <div style="display: grid; grid-template-columns: 210px 1fr 230px; align-items: start; margin-bottom: 2px; padding: 5px 15px 0 15px;">
+            <div style="text-align: left; display: flex; gap: 12px; padding-left: 45px;">
+              <img id="cert-logo-kiri1" src="" alt="" style="max-height: 52px; max-width: 45px; object-fit: contain; display: none; margin-top: 8px;">
+              <img id="cert-logo-kiri2" src="" alt="" style="max-height: 52px; max-width: 45px; object-fit: contain; display: none; margin-top: 8px;">
+            </div>
+            
+            <div style="text-align: center; align-self: center;">
+              <div id="cert-daerah" style="font-size: 15px; font-weight: 600; color: #475569; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px;">KABUPATEN / WILAYAH</div>
+              <div id="cert-instansi" style="font-size: 22px; font-weight: bold; color: #1e293b; letter-spacing: 3px;">NAMA INSTANSI</div>
+              <div id="cert-alamat" style="font-size: 11px; color: #64748b; font-family: sans-serif; margin-top: 2px;">Alamat Kantor</div>
+            </div>
+            
+            <div style="text-align: right; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; padding-right: 45px;">
+              <div style="display: flex; gap: 8px;">
+                <img id="cert-logo-kanan1" src="" alt="" style="max-height: 28px; max-width: 65px; object-fit: contain; display: none;">
+                <img id="cert-logo-kanan2" src="" alt="" style="max-height: 28px; max-width: 65px; object-fit: contain; display: none;">
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <img id="cert-logo-kanan3" src="" alt="" style="max-height: 28px; max-width: 65px; object-fit: contain; display: none;">
+                <img id="cert-logo-kanan4" src="" alt="" style="max-height: 28px; max-width: 65px; object-fit: contain; display: none;">
+              </div>
+            </div>
+          </div>
+
+          <div style="margin: 12px 45px 14px 45px; border-bottom: 3px double #0f172a; padding-bottom: 2px;"></div>
+          <h1 style="font-size: 34px; font-weight: bold; color: #0f172a; letter-spacing: 4px; margin: 4px 0 2px 0; text-transform: uppercase;">SERTIFIKAT</h1>
+          <div id="cert-nomor" style="font-size: 14px; color: #334155; font-family: sans-serif;">Nomor: -</div>
+        </div>
+
+        <div style="margin-top: 5px;">
+          <div style="font-size: 15px; font-style: italic; color: #475569; margin-bottom: 2px;">Diberikan kepada:</div>
+          <div id="cert-nama" style="font-size: 30px; font-weight: bold; color: #d97706; border-bottom: 2px solid #d97706; display: inline-block; padding: 0 20px; margin: 4px 0; text-transform: uppercase;">-</div>
+          <div id="cert-nip" style="font-size: 14px; color: #475569; font-family: sans-serif; font-weight: bold; margin-bottom: 6px; min-height: 18px;"></div>
+          
+          <p style="font-size: 14px; color: #334155; font-family: sans-serif; line-height: 1.5; max-width: 720px; margin: 0 auto;">
+            Sebagai <span id="cert-peran" style="font-weight: bold;">PESERTA</span><br>
+            <span>kegiatan : </span><span id="cert-acara" style="font-weight: bold; font-style: italic;">-</span><br>
+            <span style="font-style: italic;">pada tanggal <span id="cert-tgl-kegiatan">-</span></span><br>
+            Yang diselenggarakan oleh <span id="cert-penyelenggara" style="font-weight: bold;">-</span><br>
+            <span id="cert-jp" style="font-weight: normal;">-</span>
+          </p>
+        </div>
+
+        <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 15px 16px 15px; font-family: sans-serif; font-size: 13px;">
+          <div style="text-align: left; max-width: 350px; align-self: flex-start; margin-bottom: 120px;">
+            <div style="font-weight: bold; color: #0f172a; margin-bottom: 3px; border-bottom: 1px solid #cbd5e1; padding-bottom: 2px; font-size: 12px; text-transform: uppercase;">Mata Pelajaran / Materi:</div>
+            <div id="cert-matkul" style="font-size: 12px; color: #334155; line-height: 1.4; white-space: pre-line;">-</div>
+          </div>
+
+          <div style="text-align: center; padding-right: 15px; margin-top: 45px; padding-top: 20px;">
+            <div id="cert-tgl" style="margin-bottom: 2px; font-size: 13px;">-</div>
+            <div id="cert-jabatan" style="font-weight: bold; color: #1e293b; font-size: 13px; margin-bottom: 8px;">Kepala Dinas,</div>
+            <div class="signature-container">
+              <img id="cert-ttd-img" src="" alt="Tanda Tangan">
+              <div class="signature-text">
+                <div id="cert-pejabat" style="font-weight: bold; text-decoration: underline; color: #0f172a; text-transform: uppercase; font-size: 14px;">-</div>
+                <div id="cert-pejabat-nip" style="font-size: 12px; color: #475569; margin-top: 2px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div id="cert-morse" style="font-family: monospace; font-size: 8px; font-weight: bold; color: #475569; letter-spacing: 2px; text-align: right; margin-top: 10px; padding-right: 5mm; width: 100%; white-space: nowrap; position: relative; z-index: 2;"></div>
+    </div>
+  </div>
+
+  <!-- SCRIPT APLIKASI OPTIMAL -->
+  <script>
+    let appPassword = localStorage.getItem('cert_app_password') || "1";
+
+    let settings = JSON.parse(localStorage.getItem('cert_settings')) || {
+      sheetsUrl: "",
+      instansi: "", daerah: "", alamat: "", acara: "", penyelenggara: "",
+      jabatan: "Kepala Dinas", pejabat: "", nip: "", ttdImage: "",
+      ttdWidth: 350, ttdHeight: 120, ttdX: 0, ttdY: 0, ttdOpacity: 0.35,
+      tempat: "", tanggal: new Date().toISOString().split('T')[0],
+      tglKegiatan: "", prefixNo: "", suffixNo: "", counterNo: 1,
+      jp: "", matkul: "", logoKiri1: "", logoKiri2: "",
+      logoKanan1: "", logoKanan2: "", logoKanan3: "", logoKanan4: ""
+    };
+
+    let pesertaDB = JSON.parse(localStorage.getItem('cert_peserta')) || [];
+    let arsipDB = JSON.parse(localStorage.getItem('cert_arsip')) || [];
+
+    let loginAttempts = 0;
+    let lockUntil = 0;
+
+    window.onload = function() {
+      const isAuth = sessionStorage.getItem('cert_auth_session');
+      if (isAuth === 'true') {
+        document.getElementById('login-overlay').classList.add('hidden');
+      }
+
+      loadSettingsToForm();
+      toggleIdInput();
+      
+      if(settings.sheetsUrl) {
+        loadDataFromCloud();
+      } else {
+        renderDashboard();
+        renderPeserta();
+        renderArsip();
+      }
+    };
+
+    function showLoading(text) {
+      const ind = document.getElementById('loading-indicator');
+      document.getElementById('loading-text').innerText = text;
+      ind.style.display = 'flex';
+    }
+
+    function hideLoading() {
+      document.getElementById('loading-indicator').style.display = 'none';
+    }
+
+    function syncToGoogleSheets(actionType) {
+      if(!settings.sheetsUrl) return;
+
+      let payload = { action: actionType };
+      if(actionType === 'savePeserta') payload.peserta = pesertaDB;
+      else if(actionType === 'saveArsip') payload.arsip = arsipDB;
+      else if(actionType === 'saveConfig') payload.config = settings;
+
+      fetch(settings.sheetsUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(err => {
+        console.error("Background sync gagal:", err);
+      });
+    }
+
+    function loadDataFromCloud() {
+      const currentUrlInput = document.getElementById('dash-sheets-url').value.trim();
+      if(currentUrlInput) {
+        settings.sheetsUrl = currentUrlInput;
+      }
+
+      if(!settings.sheetsUrl) {
+        alert("⚠️ URL Google Sheets belum diatur di Dashboard!");
+        return;
+      }
+      showLoading("Mengambil data dari Sheets...");
+
+      const activeSheetsUrl = settings.sheetsUrl;
+
+      fetch(activeSheetsUrl + "?action=getData")
+        .then(res => res.json())
+        .then(data => {
+          hideLoading();
+          if(data.status === 'success') {
+            if(data.peserta) {
+              pesertaDB = data.peserta;
+              localStorage.setItem('cert_peserta', JSON.stringify(pesertaDB));
+            }
+            if(data.arsip) {
+              arsipDB = data.arsip;
+              localStorage.setItem('cert_arsip', JSON.stringify(arsipDB));
+            }
+            if(data.config) {
+              // Pertahankan logo lokal jika dari cloud data config logo-nya kosong
+              settings.logoKiri1 = data.config.logoKiri1 || settings.logoKiri1;
+              settings.logoKiri2 = data.config.logoKiri2 || settings.logoKiri2;
+              settings.logoKanan1 = data.config.logoKanan1 || settings.logoKanan1;
+              settings.logoKanan2 = data.config.logoKanan2 || settings.logoKanan2;
+              settings.logoKanan3 = data.config.logoKanan3 || settings.logoKanan3;
+              settings.logoKanan4 = data.config.logoKanan4 || settings.logoKanan4;
+              settings.ttdImage = data.config.ttdImage || settings.ttdImage;
+
+              // Timpa properti teks lainnya
+              for(let key in data.config) {
+                if(!['logoKiri1', 'logoKiri2', 'logoKanan1', 'logoKanan2', 'logoKanan3', 'logoKanan4', 'ttdImage'].includes(key)) {
+                  settings[key] = data.config[key];
+                }
+              }
+            }
+            
+            settings.sheetsUrl = activeSheetsUrl;
+            localStorage.setItem('cert_settings', JSON.stringify(settings));
+            
+            loadSettingsToForm();
+            renderDashboard();
+            renderPeserta();
+            renderArsip();
+            alert("✅ Berhasil memuat data terbaru dari Google Sheets!");
+          }
+        })
+        .catch(err => {
+          hideLoading();
+          settings.sheetsUrl = activeSheetsUrl;
+          localStorage.setItem('cert_settings', JSON.stringify(settings));
+
+          alert("Gagal memuat data cloud. Pastikan URL Web App benar dan izin akses diatur ke 'Anyone'.");
+          renderDashboard();
+          renderPeserta();
+          renderArsip();
+        });
+    }
+
+    function saveSheetsUrlFromDashboard() {
+      const urlInput = document.getElementById('dash-sheets-url').value.trim();
+      if(!urlInput) {
+        alert("⚠️ URL Google Sheets tidak boleh kosong!");
+        return;
+      }
+      settings.sheetsUrl = urlInput;
+      localStorage.setItem('cert_settings', JSON.stringify(settings));
+      alert("✅ URL Google Sheets berhasil disimpan di Dashboard!");
+      loadDataFromCloud();
+    }
+
+    function checkAccessCode() {
+      const now = Date.now();
+      const errorEl = document.getElementById('login-error-msg');
+      if (now < lockUntil) {
+        errorEl.innerText = `Terkunci sementara. Coba lagi dalam ${Math.ceil((lockUntil - now) / 1000)} detik.`;
+        return;
+      }
+      const inputVal = document.getElementById('access-code-input').value.trim();
+      const correctCode = appPassword;
+
+      if (inputVal === correctCode) {
+        loginAttempts = 0;
+        sessionStorage.setItem('cert_auth_session', 'true');
+        document.getElementById('login-overlay').classList.add('hidden');
+        document.getElementById('access-code-input').value = '';
+        errorEl.innerText = '';
+      } else {
+        loginAttempts++;
+        if (loginAttempts >= 5) {
+          lockUntil = now + (30 * 1000);
+          loginAttempts = 0;
+          errorEl.innerText = "5x Salah! Terkunci sementara 30 detik.";
+        } else {
+          errorEl.innerText = `Kode salah! Sisa percobaan: ${5 - loginAttempts}`;
+        }
+      }
+    }
+
+    function logoutSystem() {
+      sessionStorage.removeItem('cert_auth_session');
+      document.getElementById('login-overlay').classList.remove('hidden');
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`modul-${tabName}`).classList.remove('hidden');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+      if(tabName === 'dashboard') renderDashboard();
+    }
+
+    function renderDashboard() {
+      const totalPeserta = pesertaDB.length;
+      const totalArsip = arsipDB.length;
+      const pesertaSudahDapat = arsipDB.map(a => String(a.pesertaId));
+      const totalTerbit = pesertaDB.filter(p => pesertaSudahDapat.includes(String(p.id))).length;
+      const belumTerbit = totalPeserta - totalTerbit;
+
+      document.getElementById('dash-total-peserta').innerText = totalPeserta;
+      document.getElementById('dash-total-terbit').innerText = totalTerbit;
+      document.getElementById('dash-belum-terbit').innerText = belumTerbit < 0 ? 0 : belumTerbit;
+      document.getElementById('dash-total-arsip').innerText = totalArsip;
+
+      if(document.getElementById('dash-sheets-url')) {
+        document.getElementById('dash-sheets-url').value = settings.sheetsUrl || "";
+      }
+
+      const tbody = document.getElementById('table-dash-recent-body');
+      tbody.innerHTML = '';
+      if (arsipDB.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8; font-style: italic;">Belum ada arsip sertifikat.</td></tr>`;
+        return;
+      }
+      [...arsipDB].reverse().slice(0, 5).forEach(a => {
+        tbody.innerHTML += `
+          <tr>
+            <td style="font-family: monospace; font-size: 11px; font-weight: bold;">${a.noSertifikat}</td>
+            <td><strong>${a.nama}</strong> <span class="badge">${a.peran || 'PESERTA'}</span></td>
+            <td style="font-size: 11px;">${a.tglTerbit}</td>
+            <td style="text-align: center;">
+              <button type="button" onclick="cetakSertifikat('${a.id}')" class="btn btn-amber btn-sm">🖨️</button>
+              <button type="button" onclick="kirimWA('${a.id}')" class="btn btn-sm" style="background-color: #16a34a; color:#fff;">💬</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function toggleIdInput() {
+      const tipe = document.getElementById('p-tipe-id').value;
+      const groupNoId = document.getElementById('group-no-id');
+      const labelNoId = document.getElementById('label-no-id');
+      const inputNip = document.getElementById('p-nip');
+
+      if (tipe === 'Tidak') {
+        groupNoId.style.display = 'none';
+        inputNip.required = false;
+        inputNip.value = '';
+      } else {
+        groupNoId.style.display = 'block';
+        inputNip.required = true;
+        labelNoId.innerText = tipe === 'NIP' ? 'NIP' : `Lembaga ${tipe}`;
+      }
+    }
+
+    function toggleEditIdInput() {
+      const tipe = document.getElementById('edit-p-tipe-id').value;
+      document.getElementById('edit-group-no-id').style.display = (tipe === 'Tidak') ? 'none' : 'block';
+    }
+
+    function toggleEditArsipIdInput() {
+      const tipe = document.getElementById('edit-a-tipe-id').value;
+      document.getElementById('edit-arsip-group-no-id').style.display = (tipe === 'Tidak') ? 'none' : 'block';
+    }
+
+    function setTanggalHariIni() {
+      document.getElementById('cfg-tanggal').value = new Date().toISOString().split('T')[0];
+    }
+
+    function formatTanggalIndo(dateString) {
+      if(!dateString) return "";
+      if(dateString.includes('-')) {
+        const parts = dateString.split('-');
+        if(parts.length === 3) {
+          const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+          return `${parseInt(parts[2], 10)} ${monthNames[parseInt(parts[1], 10) - 1]} ${parts[0]}`;
+        }
+      }
+      return dateString;
+    }
+
+    function loadSettingsToForm() {
+      document.getElementById('cfg-app-pass').value = appPassword;
+      document.getElementById('cfg-instansi').value = settings.instansi || "";
+      document.getElementById('cfg-daerah').value = settings.daerah || "";
+      document.getElementById('cfg-alamat').value = settings.alamat || "";
+      document.getElementById('cfg-acara').value = settings.acara || "";
+      document.getElementById('cfg-penyelenggara').value = settings.penyelenggara || "";
+      document.getElementById('cfg-jabatan').value = settings.jabatan || "Kepala Dinas";
+      document.getElementById('cfg-pejabat').value = settings.pejabat || "";
+      document.getElementById('cfg-nip').value = settings.nip || "";
+      document.getElementById('cfg-tempat').value = settings.tempat || "";
+      document.getElementById('cfg-tanggal').value = settings.tanggal || new Date().toISOString().split('T')[0];
+      document.getElementById('cfg-tgl-kegiatan').value = settings.tglKegiatan || "";
+      document.getElementById('cfg-prefix-no').value = settings.prefixNo || "";
+      document.getElementById('cfg-suffix-no').value = settings.suffixNo || "";
+      document.getElementById('cfg-counter-no').value = settings.counterNo || 1;
+      document.getElementById('cfg-jp').value = settings.jp || "";
+      document.getElementById('cfg-matkul').value = settings.matkul || "";
+
+      if(settings.ttdOpacity !== undefined) {
+        document.getElementById('cfg-ttd-opacity').value = settings.ttdOpacity;
+        document.getElementById('val-ttd-op').innerText = settings.ttdOpacity;
+      }
+      if(settings.ttdWidth) { document.getElementById('cfg-ttd-width').value = settings.ttdWidth; document.getElementById('val-ttd-w').innerText = settings.ttdWidth; }
+      if(settings.ttdHeight) { document.getElementById('cfg-ttd-height').value = settings.ttdHeight; document.getElementById('val-ttd-h').innerText = settings.ttdHeight; }
+      if(settings.ttdX !== undefined) { document.getElementById('cfg-ttd-offset-x').value = settings.ttdX; document.getElementById('val-ttd-x').innerText = settings.ttdX; }
+      if(settings.ttdY !== undefined) { document.getElementById('cfg-ttd-offset-y').value = settings.ttdY; document.getElementById('val-ttd-y').innerText = settings.ttdY; }
+
+      // Load preview Logo Kiri 1 & 2 serta Logo Kanan lainnya secara spesifik
+      const logoMappings = {
+        'kiri1': settings.logoKiri1,
+        'kiri2': settings.logoKiri2,
+        'kanan1': settings.logoKanan1,
+        'kanan2': settings.logoKanan2,
+        'kanan3': settings.logoKanan3,
+        'kanan4': settings.logoKanan4
+      };
+
+      for (const [pos, dataUrl] of Object.entries(logoMappings)) {
+        const prevImg = document.getElementById('prev-' + pos);
+        if (prevImg) {
+          if (dataUrl) {
+            prevImg.src = dataUrl;
+            prevImg.style.display = 'block';
+          } else {
+            prevImg.src = '';
+          }
+        }
+      }
+
+      if(settings.ttdImage) {
+        const prevTtd = document.getElementById('prev-ttd');
+        prevTtd.src = settings.ttdImage;
+        prevTtd.style.display = 'block';
+      }
+    }
+
+    function previewLogo(event, position) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 250;
+            let width = img.width;
+            let height = img.height;
+            
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            const compressedDataUrl = canvas.toDataURL('image/png');
+            
+            // Simpan ke properti objek settings yang sesuai
+            if(position === 'kiri1') settings.logoKiri1 = compressedDataUrl;
+            if(position === 'kiri2') settings.logoKiri2 = compressedDataUrl;
+            if(position === 'kanan1') settings.logoKanan1 = compressedDataUrl;
+            if(position === 'kanan2') settings.logoKanan2 = compressedDataUrl;
+            if(position === 'kanan3') settings.logoKanan3 = compressedDataUrl;
+            if(position === 'kanan4') settings.logoKanan4 = compressedDataUrl;
+            
+            const prevEl = document.getElementById('prev-' + position);
+            if(prevEl) {
+              prevEl.src = compressedDataUrl;
+              prevEl.style.display = 'block';
+            }
+            
+            localStorage.setItem('cert_settings', JSON.stringify(settings));
+          }
+          img.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function makeImageTransparent(dataUrl, callback) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width; canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imgData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          if (data[i] > 200 && data[i+1] > 200 && data[i+2] > 200) data[i+3] = 0;
+        }
+        ctx.putImageData(imgData, 0, 0);
+        callback(canvas.toDataURL('image/png'));
+      };
+      img.src = dataUrl;
+    }
+
+    function previewTtd(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          makeImageTransparent(e.target.result, function(transparentDataUrl) {
+            settings.ttdImage = transparentDataUrl;
+            const prevTtd = document.getElementById('prev-ttd');
+            prevTtd.src = settings.ttdImage;
+            prevTtd.style.display = 'block';
+          });
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function updateTtdPreviewParams() {
+      const w = document.getElementById('cfg-ttd-width').value;
+      const h = document.getElementById('cfg-ttd-height').value;
+      const x = document.getElementById('cfg-ttd-offset-x').value;
+      const y = document.getElementById('cfg-ttd-offset-y').value;
+      const op = document.getElementById('cfg-ttd-opacity').value;
+
+      document.getElementById('val-ttd-w').innerText = w;
+      document.getElementById('val-ttd-h').innerText = h;
+      document.getElementById('val-ttd-x').innerText = x;
+      document.getElementById('val-ttd-y').innerText = y;
+      document.getElementById('val-ttd-op').innerText = op;
+
+      const prevTtd = document.getElementById('prev-ttd');
+      if(prevTtd) {
+        prevTtd.style.maxWidth = w + 'px';
+        prevTtd.style.maxHeight = h + 'px';
+        prevTtd.style.opacity = op;
+        prevTtd.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+      }
+    }
+
+    function saveSettings(e) {
+      e.preventDefault();
+      
+      const newPass = document.getElementById('cfg-app-pass').value.trim();
+      if(newPass) {
+        appPassword = newPass;
+        localStorage.setItem('cert_app_password', appPassword);
+      }
+
+      settings.instansi = document.getElementById('cfg-instansi').value;
+      settings.daerah = document.getElementById('cfg-daerah').value;
+      settings.alamat = document.getElementById('cfg-alamat').value;
+      settings.acara = document.getElementById('cfg-acara').value;
+      settings.penyelenggara = document.getElementById('cfg-penyelenggara').value;
+      settings.jabatan = document.getElementById('cfg-jabatan').value;
+      settings.pejabat = document.getElementById('cfg-pejabat').value;
+      settings.nip = document.getElementById('cfg-nip').value;
+      settings.tempat = document.getElementById('cfg-tempat').value;
+      settings.tanggal = document.getElementById('cfg-tanggal').value;
+      settings.tglKegiatan = document.getElementById('cfg-tgl-kegiatan').value;
+      settings.prefixNo = document.getElementById('cfg-prefix-no').value;
+      settings.suffixNo = document.getElementById('cfg-suffix-no').value;
+      settings.counterNo = parseInt(document.getElementById('cfg-counter-no').value);
+      settings.jp = document.getElementById('cfg-jp').value;
+      settings.matkul = document.getElementById('cfg-matkul').value;
+      settings.ttdWidth = parseInt(document.getElementById('cfg-ttd-width').value);
+      settings.ttdHeight = parseInt(document.getElementById('cfg-ttd-height').value);
+      settings.ttdX = parseInt(document.getElementById('cfg-ttd-offset-x').value);
+      settings.ttdY = parseInt(document.getElementById('cfg-ttd-offset-y').value);
+      settings.ttdOpacity = parseFloat(document.getElementById('cfg-ttd-opacity').value);
+
+      localStorage.setItem('cert_settings', JSON.stringify(settings));
+      renderDashboard();
+      syncToGoogleSheets('saveConfig');
+      alert('Konfigurasi berhasil disimpan!');
+    }
+
+    function addPeserta(e) {
+      e.preventDefault();
+      const tipeId = document.getElementById('p-tipe-id').value;
+      const nipVal = tipeId === 'Tidak' ? '' : document.getElementById('p-nip').value.trim();
+      const namaVal = document.getElementById('p-nama').value.trim();
+
+      pesertaDB.push({
+        id: String(Date.now()),
+        tipeId: tipeId,
+        nip: nipVal,
+        nama: namaVal,
+        wa: document.getElementById('p-wa').value.trim(),
+        peran: document.getElementById('p-peran').value
+      });
+      
+      localStorage.setItem('cert_peserta', JSON.stringify(pesertaDB));
+
+      document.getElementById('p-nip').value = '';
+      document.getElementById('p-nama').value = '';
+      document.getElementById('p-wa').value = '';
+      renderDashboard();
+      renderPeserta();
+      syncToGoogleSheets('savePeserta');
+    }
+
+    function openEditPesertaModal(id) {
+      const p = pesertaDB.find(item => String(item.id) === String(id));
+      if(!p) return;
+      document.getElementById('edit-p-id').value = p.id;
+      document.getElementById('edit-p-tipe-id').value = p.tipeId || 'NIP';
+      document.getElementById('edit-p-nip').value = p.nip || '';
+      document.getElementById('edit-p-nama').value = p.nama || '';
+      document.getElementById('edit-p-wa').value = p.wa || '';
+      document.getElementById('edit-p-peran').value = p.peran || 'PESERTA';
+      toggleEditIdInput();
+      document.getElementById('modal-edit-peserta').classList.remove('hidden');
+    }
+
+    function closeEditPesertaModal() {
+      document.getElementById('modal-edit-peserta').classList.add('hidden');
+    }
+
+    function saveEditPeserta() {
+      const id = document.getElementById('edit-p-id').value;
+      const p = pesertaDB.find(item => String(item.id) === String(id));
+      if(p) {
+        const tipe = document.getElementById('edit-p-tipe-id').value;
+        p.tipeId = tipe;
+        p.nip = tipe === 'Tidak' ? '' : document.getElementById('edit-p-nip').value.trim();
+        p.nama = document.getElementById('edit-p-nama').value.trim();
+        p.wa = document.getElementById('edit-p-wa').value.trim();
+        p.peran = document.getElementById('edit-p-peran').value;
+
+        localStorage.setItem('cert_peserta', JSON.stringify(pesertaDB));
+        renderDashboard();
+        renderPeserta();
+        renderArsip();
+        closeEditPesertaModal();
+        syncToGoogleSheets('savePeserta');
+      }
+    }
+
+    function deletePeserta(id) {
+      if(confirm('Hapus peserta ini?')) {
+        pesertaDB = pesertaDB.filter(p => String(p.id) !== String(id));
+        localStorage.setItem('cert_peserta', JSON.stringify(pesertaDB));
+        renderDashboard();
+        renderPeserta();
+        syncToGoogleSheets('savePeserta');
+      }
+    }
+
+    function renderPeserta() {
+      const tbody = document.getElementById('table-peserta-body');
+      const select = document.getElementById('select-peserta-sertifikat');
+      document.getElementById('count-peserta').innerText = `Total: ${pesertaDB.length}`;
+      tbody.innerHTML = '';
+      select.innerHTML = '<option value="">-- Pilih Peserta --</option>';
+
+      if(pesertaDB.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8; font-style: italic;">Belum ada data peserta.</td></tr>`;
+        return;
+      }
+
+      const pesertaSudahDapat = arsipDB.map(a => String(a.pesertaId));
+      pesertaDB.forEach(p => {
+        let displayId = p.nip ? `${p.tipeId}: ${p.nip}` : `[ ${p.tipeId} ]`;
+        const isTerbit = pesertaSudahDapat.includes(String(p.id));
+        const statusBadge = isTerbit ? `<span class="badge" style="background:#dcfce7; color:#15803d; margin-left:4px;">✓ Terbit</span>` : '';
+
+        tbody.innerHTML += `
+          <tr>
+            <td style="font-family: monospace; font-size: 11px;">${displayId}</td>
+            <td style="font-weight: 600;">${p.nama} ${statusBadge}</td>
+            <td style="font-family: monospace; font-size: 11px;">${p.wa}</td>
+            <td><span class="badge">${p.peran || 'PESERTA'}</span></td>
+            <td style="text-align: center;">
+              <button type="button" onclick="openEditPesertaModal('${p.id}')" class="btn btn-sm" style="background-color: #cbd5e1; color:#1e293b;">✏️</button>
+              <button type="button" onclick="deletePeserta('${p.id}')" class="btn btn-rose btn-sm">🗑️</button>
+            </td>
+          </tr>
+        `;
+        if (!isTerbit) select.innerHTML += `<option value="${p.id}">${p.nama} - ${p.peran || 'PESERTA'}</option>`;
+      });
+    }
+
+    function generateSertifikat() {
+      const selectedId = document.getElementById('select-peserta-sertifikat').value;
+      if(!selectedId) return alert('Silakan pilih peserta terlebih dahulu!');
+
+      const sudahAdaArsip = arsipDB.find(a => String(a.pesertaId) === String(selectedId));
+      if(sudahAdaArsip) {
+        alert('⚠️ Peserta ini sudah memiliki sertifikat dengan Nomor: ' + sudahAdaArsip.noSertifikat);
+        return;
+      }
+
+      const peserta = pesertaDB.find(p => String(p.id) === String(selectedId));
+      if(!peserta) return alert('Data peserta tidak ditemukan.');
+
+      const paddedCounter = String(settings.counterNo).padStart(3, '0');
+      const noSertifikat = (settings.prefixNo || "") + paddedCounter + (settings.suffixNo || "");
+
+      const cekNoSertifikat = arsipDB.find(a => a.noSertifikat === noSertifikat);
+      if(cekNoSertifikat) {
+        alert('⚠️ Nomor sertifikat sudah ada dalam arsip. Periksa kembali nomor urut Anda.');
+        return;
+      }
+
+      arsipDB.push({
+        id: String(Date.now()),
+        pesertaId: peserta.id,
+        noSertifikat: noSertifikat,
+        nama: peserta.nama,
+        tipeId: peserta.tipeId || 'NIP',
+        nip: peserta.nip || '',
+        wa: peserta.wa || '',
+        peran: peserta.peran || 'PESERTA',
+        tglTerbit: `${settings.tempat}, ${formatTanggalIndo(settings.tanggal)}`
+      });
+
+      settings.counterNo += 1;
+
+      localStorage.setItem('cert_arsip', JSON.stringify(arsipDB));
+      localStorage.setItem('cert_settings', JSON.stringify(settings));
+
+      loadSettingsToForm();
+      renderDashboard();
+      renderPeserta();
+      renderArsip();
+
+      syncToGoogleSheets('saveArsip');
+      syncToGoogleSheets('saveConfig');
+      alert(`Sertifikat berhasil diterbitkan!\nNomor: ${noSertifikat}`);
+    }
+
+    function openEditArsipModal(id) {
+      const a = arsipDB.find(item => String(item.id) === String(id));
+      if(!a) return;
+      document.getElementById('edit-a-id').value = a.id;
+      document.getElementById('edit-a-nosert').value = a.noSertifikat || '';
+      document.getElementById('edit-a-nama').value = a.nama || '';
+      document.getElementById('edit-a-tipe-id').value = a.tipeId || 'NIP';
+      document.getElementById('edit-a-nip').value = a.nip || '';
+      document.getElementById('edit-a-wa').value = a.wa || '';
+      document.getElementById('edit-a-peran').value = a.peran || 'PESERTA';
+      document.getElementById('edit-a-tglterbit').value = a.tglTerbit || '';
+      toggleEditArsipIdInput();
+      document.getElementById('modal-edit-arsip').classList.remove('hidden');
+    }
+
+    function closeEditArsipModal() {
+      document.getElementById('modal-edit-arsip').classList.add('hidden');
+    }
+
+    function saveEditArsip() {
+      const id = document.getElementById('edit-a-id').value;
+      const a = arsipDB.find(item => String(item.id) === String(id));
+      if(a) {
+        const tipe = document.getElementById('edit-a-tipe-id').value;
+        a.noSertifikat = document.getElementById('edit-a-nosert').value.trim();
+        a.nama = document.getElementById('edit-a-nama').value.trim();
+        a.tipeId = tipe;
+        a.nip = tipe === 'Tidak' ? '' : document.getElementById('edit-a-nip').value.trim();
+        a.wa = document.getElementById('edit-a-wa').value.trim();
+        a.peran = document.getElementById('edit-a-peran').value;
+        a.tglTerbit = document.getElementById('edit-a-tglterbit').value.trim();
+
+        localStorage.setItem('cert_arsip', JSON.stringify(arsipDB));
+        renderDashboard();
+        renderPeserta();
+        renderArsip();
+        closeEditArsipModal();
+        syncToGoogleSheets('saveArsip');
+        alert('✅ Arsip sertifikat berhasil diperbarui!');
+      }
+    }
+
+    function renderArsip() {
+      const tbody = document.getElementById('table-arsip-body');
+      document.getElementById('count-arsip').innerText = `Total: ${arsipDB.length}`;
+      tbody.innerHTML = '';
+
+      if(arsipDB.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8; font-style: italic;">Belum ada arsip sertifikat.</td></tr>`;
+        return;
+      }
+
+      arsipDB.forEach(a => {
+        tbody.innerHTML += `
+          <tr>
+            <td style="font-family: monospace; font-size: 11px; font-weight: bold;">${a.noSertifikat}</td>
+            <td><strong>${a.nama}</strong> <span class="badge">${a.peran || 'PESERTA'}</span></td>
+            <td style="font-size: 11px;">${a.tglTerbit}</td>
+            <td style="text-align: center;">
+              <button type="button" onclick="openEditArsipModal('${a.id}')" class="btn btn-sm" style="background-color: #cbd5e1; color:#1e293b;" title="Edit Arsip">✏️</button>
+              <button type="button" onclick="cetakSertifikat('${a.id}')" class="btn btn-amber btn-sm" title="Cetak">🖨️</button>
+              <button type="button" onclick="kirimWA('${a.id}')" class="btn btn-sm" style="background-color: #16a34a; color:#fff;" title="Kirim WA">💬</button>
+              <button type="button" onclick="deleteArsip('${a.id}')" class="btn btn-rose btn-sm" title="Hapus">🗑️</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function deleteArsip(id) {
+      if(confirm('Hapus arsip ini?')) {
+        arsipDB = arsipDB.filter(a => String(a.id) !== String(id));
+        localStorage.setItem('cert_arsip', JSON.stringify(arsipDB));
+        renderDashboard();
+        renderPeserta();
+        renderArsip();
+        syncToGoogleSheets('saveArsip');
+      }
+    }
+
+    function textToMorseNumbersOnly(text) {
+      const morseNumberMap = {
+        '1': '.----', '2': '..---', '3': '...--', '4': '....-', '5': '.....',
+        '6': '-....', '7': '--...', '8': '---..', '9': '----.', '0': '-----'
+      };
+      
+      const segments = text.split('/');
+      let targetNumbers = "";
+      
+      for (let seg of segments) {
+        let cleanNum = seg.replace(/[^0-9]/g, '');
+        if (cleanNum.length === 3) {
+          targetNumbers = cleanNum;
+          break;
+        }
+      }
+      
+      if (!targetNumbers) {
+        const allNums = text.replace(/[^0-9]/g, '');
+        targetNumbers = allNums.slice(-3);
+      }
+
+      return targetNumbers.split('').map(digit => morseNumberMap[digit] || '').filter(Boolean).join('/');
+    }
+
+    function cetakSertifikat(id) {
+      const arsip = arsipDB.find(a => String(a.id) === String(id));
+      if(!arsip) return alert('Data arsip tidak ditemukan.');
+
+      document.getElementById('cert-instansi').innerText = settings.instansi || '';
+      document.getElementById('cert-daerah').innerText = settings.daerah || '';
+      document.getElementById('cert-alamat').innerText = settings.alamat || '';
+      document.getElementById('cert-nomor').innerText = `Nomor: ${arsip.noSertifikat}`;
+      document.getElementById('cert-nama').innerText = arsip.nama;
+      document.getElementById('cert-nip').innerText = arsip.nip ? `${arsip.tipeId || 'NIP'}. ${arsip.nip}` : '';
+      document.getElementById('cert-peran').innerText = arsip.peran || 'PESERTA';
+      document.getElementById('cert-acara').innerText = settings.acara || '';
+      document.getElementById('cert-penyelenggara').innerText = settings.penyelenggara || '';
+      document.getElementById('cert-tgl-kegiatan').innerText = settings.tglKegiatan || '';
+      document.getElementById('cert-jp').innerText = settings.jp || '';
+      document.getElementById('cert-matkul').innerText = settings.matkul || '';
+      document.getElementById('cert-tgl').innerText = arsip.tglTerbit;
+      document.getElementById('cert-jabatan').innerText = (settings.jabatan || 'Kepala Dinas') + ',';
+      document.getElementById('cert-pejabat').innerText = settings.pejabat || '';
+      document.getElementById('cert-pejabat-nip').innerText = settings.nip ? `NIP. ${settings.nip}` : '';
+
+      const ttdImg = document.getElementById('cert-ttd-img');
+      if(settings.ttdImage) {
+        ttdImg.src = settings.ttdImage;
+        ttdImg.style.display = 'block';
+        ttdImg.style.maxWidth = (settings.ttdWidth || 350) + 'px';
+        ttdImg.style.maxHeight = (settings.ttdHeight || 120) + 'px';
+        ttdImg.style.opacity = settings.ttdOpacity !== undefined ? settings.ttdOpacity : 0.35;
+        ttdImg.style.transform = `translate(calc(-50% + ${settings.ttdX || 0}px), calc(-50% + ${settings.ttdY || 0}px))`;
+      } else {
+        ttdImg.style.display = 'none';
+      }
+
+      document.getElementById('cert-morse').innerText = textToMorseNumbersOnly(arsip.noSertifikat);
+      
+      // Render Logo secara aman berdasarkan property settings yang tepat
+      const logoPairs = [
+        { key: 'logoKiri1', elId: 'cert-logo-kiri1' },
+        { key: 'logoKiri2', elId: 'cert-logo-kiri2' },
+        { key: 'logoKanan1', elId: 'cert-logo-kanan1' },
+        { key: 'logoKanan2', elId: 'cert-logo-kanan2' },
+        { key: 'logoKanan3', elId: 'cert-logo-kanan3' },
+        { key: 'logoKanan4', elId: 'cert-logo-kanan4' }
+      ];
+
+      logoPairs.forEach(item => {
+        const el = document.getElementById(item.elId);
+        if(settings[item.key]) {
+          el.src = settings[item.key];
+          el.style.display = 'inline-block';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+
+      window.print();
+    }
+
+    function kirimWA(id) {
+      const arsip = arsipDB.find(a => String(a.id) === String(id));
+      if(!arsip || !arsip.wa) return alert('Nomor WA tidak tersedia.');
+      let phone = arsip.wa.replace(/[^0-9]/g, '');
+      if (phone.startsWith('0')) phone = '62' + phone.slice(1);
+      const pesan = `Yth. Bapak/Ibu *${arsip.nama}*,\n\nSertifikat kegiatan *${settings.acara}* telah diterbitkan dengan Nomor: *${arsip.noSertifikat}*.\n\nTerima kasih.`;
+      window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(pesan)}`, '_blank');
+    }
+  </script>
+</body>
+</html>
